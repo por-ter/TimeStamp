@@ -183,7 +183,7 @@
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton3ActionPerformed,pauseCalc"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton3ActionPerformed,pauseCalc,stopwatchGehen"/>
           </Events>
         </Component>
         <Container class="javax.swing.JPanel" name="jPanel5">

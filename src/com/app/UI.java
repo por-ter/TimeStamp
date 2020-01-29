@@ -5,9 +5,12 @@
  */
 package com.app;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import static java.time.temporal.ChronoUnit.MINUTES;
@@ -15,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JScrollBar;
 import javax.swing.ListModel;
+import javax.swing.Timer;
 import javax.swing.event.ListDataListener;
 import javax.swing.table.DefaultTableModel;
 
@@ -96,6 +100,7 @@ public class UI extends javax.swing.JFrame {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
                 pauseCalc(evt);
+                stopwatchGehen(evt);
             }
         });
 
@@ -198,44 +203,43 @@ public class UI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
-        if (jButton1.getText().equalsIgnoreCase("new day")){
-            
+
+        if (jButton1.getText().equalsIgnoreCase("new day")) {
+
             jButton1.setText("Reset");
-            
+
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
             LocalTime time = LocalTime.now().plusHours(8).plusMinutes(30);
             String f = formatter.format(time);
-    //        
-    //        jLabel1.setText(f);
-    
-    
-            jLabel1.setText(f);           
+            //        
+            //        jLabel1.setText(f);
+
+            jLabel1.setText(f);
 
             jButton2.setEnabled(false);
             jButton3.setEnabled(true);
-            
+
         } else {
-            
+
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
             LocalTime time = LocalTime.now().plusHours(8).plusMinutes(30);
             String f = formatter.format(time);
-            
+
             jLabel1.setText(f);
-            
-            DefaultTableModel model = (DefaultTableModel)jTable1.getModel(); 
-        
-            int rows = model.getRowCount(); 
-                for (int i = rows - 1; i >= 0; i--) {
+
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+
+            int rows = model.getRowCount();
+            for (int i = rows - 1; i >= 0; i--) {
                 model.removeRow(i);
             }
 
             jButton2.setEnabled(false);
             jButton3.setEnabled(true);
-            
+
         }
-        
-        
+
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -245,12 +249,12 @@ public class UI extends javax.swing.JFrame {
 //        
 //        jLabel1.setText(f);
 
-        DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.addRow(new Object[]{f, "Gehen"});
-        
+
         jButton2.setEnabled(true);
         jButton3.setEnabled(false);
-        
+
         JScrollBar vertical = jScrollPane1.getVerticalScrollBar();
         vertical.setValue(vertical.getMaximum());
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -262,72 +266,49 @@ public class UI extends javax.swing.JFrame {
 //        
 //        jLabel1.setText(f);
 
-        DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.addRow(new Object[]{f, "Kommen"});
-        
+
         jButton2.setEnabled(false);
         jButton3.setEnabled(true);
-        
+
         JScrollBar vertical = jScrollPane1.getVerticalScrollBar();
         vertical.setValue(vertical.getMaximum());
-        
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void addRowAuch(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addRowAuch
-        
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         LocalTime time = LocalTime.now();
         String f = formatter.format(time);
-        
-        DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
+
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.addRow(new Object[]{f, "Kommen"});
     }//GEN-LAST:event_addRowAuch
 
     private void pauseCalc(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pauseCalc
-        // Get the time from the last row, save in variable
-        DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
-        
-        int lastRow = model.getRowCount()-1;        
-        String lastTimeStamp = (String) jTable1.getModel().getValueAt(lastRow-1, 0);
-        
-//        System.out.println(lastTimeStamp); // it works
-        
-        // Get the current time
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-        LocalTime time = LocalTime.now();
-        
-        String currentTime = formatter.format(time);
-        
-        // Parse lastTime and currentTime        
-        LocalTime time1 = LocalTime.parse(lastTimeStamp);
-        LocalTime time2 = LocalTime.parse(currentTime);
-        
-        System.out.println(time1.until(time2, MINUTES));
-        System.out.println(MINUTES.between(time2, time1));
-        System.out.println(time1);
-        System.out.println(time2);
-        
-        long elapsedMinutes = Duration.between(time2, time1).toMinutes();
-        long elapsedMinutes2 = Duration.between(time1, time2).toMinutes();
-        
-        System.out.println(elapsedMinutes);
-        System.out.println(elapsedMinutes2);
-        
-//        long diffTimeAsLong = time1.until(time2, MINUTES);
-//        String test = (String)parseLong(diffTimeAsLong)
-//        
-//        LocalTime differenceInTime = LocalTime.parse(diffTimeAsLong);
-//        
-//        String formattedDifference = formatter.format(time1.until(time2, MINUTES));
-        
-        // Store difference in a variable
-        
-        // Read label, get value in minutes
-        
-        // Add these together
-        
-        // Print to label
+        // TODO
     }//GEN-LAST:event_pauseCalc
+    Instant start;
+    private void stopwatchGehen(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopwatchGehen
+        start = Instant.now();
+        
+        Timer timer = new Timer(1, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+//                LocalTime time1 = LocalTime.parse(Duration.between(start, Instant.now()).getSeconds());
+
+                String test = Duration.between(start, Instant.now()).getSeconds() + "";
+                
+//                DateTimeFormatter.ofPattern("hh:mm:ss").format(LocalTime.MIDNIGHT.plus(test));
+                
+                jLabel5.setText(Duration.between(start, Instant.now()).toHours() + ":" + Duration.between(start, Instant.now()).toMinutes() + ":" + Duration.between(start, Instant.now()).getSeconds());
+            }            
+        });
+        timer.start();
+    }//GEN-LAST:event_stopwatchGehen
 
     /**
      * @param args the command line arguments
