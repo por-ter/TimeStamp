@@ -7,19 +7,21 @@ package com.app;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.ParseException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import static java.time.temporal.ChronoUnit.MINUTES;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import static java.time.temporal.ChronoUnit.SECONDS;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import javax.swing.JScrollBar;
-import javax.swing.ListModel;
 import javax.swing.Timer;
-import javax.swing.event.ListDataListener;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -34,6 +36,13 @@ public class UI extends javax.swing.JFrame {
     public UI() {
         initComponents();
     }
+
+    Instant start;
+    long timeElapsed;
+    long pauseElapsed = 0;
+    long pauseTotal = 0;
+    long arbeitElapsed = 0;
+    long arbeitTotal = 0;
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -69,6 +78,7 @@ public class UI extends javax.swing.JFrame {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
                 addRowAuch(evt);
+                newDayTimer(evt);
             }
         });
 
@@ -77,6 +87,7 @@ public class UI extends javax.swing.JFrame {
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
+                kommenTimer(evt);
             }
         });
 
@@ -100,7 +111,7 @@ public class UI extends javax.swing.JFrame {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
                 pauseCalc(evt);
-                stopwatchGehen(evt);
+                gehenTimer(evt);
             }
         });
 
@@ -151,6 +162,7 @@ public class UI extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jLabel4.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
         jLabel4.setText("Current Date Platzhalter");
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Stempeln"));
@@ -167,6 +179,9 @@ public class UI extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(jTable1);
 
+        jLabel5.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel5.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(0, 0, 51));
         jLabel5.setText("Timer Platzhalter");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -194,7 +209,7 @@ public class UI extends javax.swing.JFrame {
                     .addComponent(jLabel4)
                     .addComponent(jLabel5))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -209,12 +224,18 @@ public class UI extends javax.swing.JFrame {
             jButton1.setText("Reset");
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+            DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+            Date date = new Date();
             LocalTime time = LocalTime.now().plusHours(8).plusMinutes(30);
+            LocalTime time2 = LocalTime.now();
             String f = formatter.format(time);
+            String f2 = formatter.format(time2);
+            String f3 = dateFormat.format(date);
             //        
             //        jLabel1.setText(f);
 
             jLabel1.setText(f);
+            jLabel4.setText(f3 + " | " + f2);
 
             jButton2.setEnabled(false);
             jButton3.setEnabled(true);
@@ -290,25 +311,50 @@ public class UI extends javax.swing.JFrame {
     private void pauseCalc(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pauseCalc
         // TODO
     }//GEN-LAST:event_pauseCalc
-    Instant start;
-    private void stopwatchGehen(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopwatchGehen
+
+    private void gehenTimer(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gehenTimer
+        arbeitElapsed = arbeitElapsed + timeElapsed;
+
         start = Instant.now();
-        
+
         Timer timer = new Timer(1, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-//                LocalTime time1 = LocalTime.parse(Duration.between(start, Instant.now()).getSeconds());
 
-                String test = Duration.between(start, Instant.now()).getSeconds() + "";
-                
-//                DateTimeFormatter.ofPattern("hh:mm:ss").format(LocalTime.MIDNIGHT.plus(test));
-                
-                jLabel5.setText(Duration.between(start, Instant.now()).toHours() + ":" + Duration.between(start, Instant.now()).toMinutes() + ":" + Duration.between(start, Instant.now()).getSeconds());
-            }            
+                jLabel5.setText(Controller.stopwatchPrinted(start));
+
+            }
         });
         timer.start();
-    }//GEN-LAST:event_stopwatchGehen
+    }//GEN-LAST:event_gehenTimer
+
+    private void newDayTimer(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newDayTimer
+        start = Instant.now();
+
+        Timer timer = new Timer(1, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+
+                jLabel5.setText(Controller.stopwatchPrinted(start));
+
+            }
+        });
+        timer.start();
+    }//GEN-LAST:event_newDayTimer
+
+    private void kommenTimer(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kommenTimer
+        start = Instant.now();
+
+        Timer timer = new Timer(1, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+
+                jLabel5.setText(Controller.stopwatchPrinted(start));
+
+            }
+        });
+        timer.start();
+    }//GEN-LAST:event_kommenTimer
 
     /**
      * @param args the command line arguments
