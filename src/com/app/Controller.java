@@ -2,6 +2,8 @@ package com.app;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
 public class Controller {
@@ -12,6 +14,11 @@ public class Controller {
     static long pauseTotal = 0;
     static long arbeitElapsed = 0;
     static long arbeitTotal = 0;
+    static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+    static LocalTime time;
+    
+    
+    
 
     public static String stopwatchPrinted(Instant start) {
 
