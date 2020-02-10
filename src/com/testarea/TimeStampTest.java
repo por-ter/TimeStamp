@@ -40,6 +40,12 @@ public class TimeStampTest {
         int six = LocalTime.parse("06:30").getHour();
         System.out.println(six);
         
+        ///////////////////////////// Duration
+        
+        LocalTime initialTime = LocalTime.of(6, 30, 0);
+        
+//        LocalTime finalTime = initialTime.plus(Duration.osSeconds()) // no idea where i left this off on friday.
+        
         
     }
 

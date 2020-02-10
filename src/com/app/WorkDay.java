@@ -4,6 +4,8 @@ import static com.app.Controller.timeElapsed;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -47,6 +49,19 @@ public class WorkDay {
     }
     
     public static String elapsedTime(String startTime) throws ParseException{
+        
+//        Instant finish = Instant.now();
+//
+//        timeElapsed = Duration.between(startTime, finish).toMillis();
+//
+//        String s = String.format("%02d:%02d:%02d",
+//                TimeUnit.MILLISECONDS.toHours(timeElapsed),
+//                TimeUnit.MILLISECONDS.toMinutes(timeElapsed),
+//                TimeUnit.MILLISECONDS.toSeconds(timeElapsed)
+//                - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeElapsed)));
+//
+////                System.out.println(s);
+//        return s;
         
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));

@@ -44,6 +44,8 @@ public class TESTUI extends javax.swing.JFrame {
     }
 
     WorkDay stempeln = new WorkDay();
+    int hour = 0;
+    int mins = 0;
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -60,7 +62,7 @@ public class TESTUI extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         feierabendLabel = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
+        pauseLabel = new javax.swing.JLabel();
         gehenButton = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
@@ -87,6 +89,7 @@ public class TESTUI extends javax.swing.JFrame {
         kommenButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 stempelnKommen(evt);
+                arbeitStempelnKommen(evt);
             }
         });
 
@@ -100,15 +103,16 @@ public class TESTUI extends javax.swing.JFrame {
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Pause"));
         jPanel4.setLayout(new java.awt.BorderLayout());
 
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("--:--");
-        jPanel4.add(jLabel2, java.awt.BorderLayout.CENTER);
+        pauseLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        pauseLabel.setText("--:--");
+        jPanel4.add(pauseLabel, java.awt.BorderLayout.CENTER);
 
         gehenButton.setText("Gehen");
         gehenButton.setEnabled(false);
         gehenButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 stempelnGehen(evt);
+                pauseStempeln(evt);
             }
         });
 
@@ -179,7 +183,7 @@ public class TESTUI extends javax.swing.JFrame {
         elapsedTimeLabel.setBackground(new java.awt.Color(255, 255, 255));
         elapsedTimeLabel.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
         elapsedTimeLabel.setForeground(new java.awt.Color(0, 0, 51));
-        elapsedTimeLabel.setText("Timer Platzhalter");
+        elapsedTimeLabel.setText("00:00:00");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -245,6 +249,8 @@ public class TESTUI extends javax.swing.JFrame {
             gehenButton.setEnabled(true);
 
         } else {
+            
+            mins = 0;
 
             // Calculate and set the new Feierabend time label
             feierabendLabel.setText(WorkDay.getFeierAbend());
@@ -270,6 +276,8 @@ public class TESTUI extends javax.swing.JFrame {
 
     // To mark the table with gehen times
     private void stempelnGehen(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stempelnGehen
+        mins = 0;
+        
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.addRow(new Object[]{WorkDay.timeStamp(), "Gehen"});
 
@@ -282,6 +290,8 @@ public class TESTUI extends javax.swing.JFrame {
 
     // To mark the table with kommen times
     private void stempelnKommen(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stempelnKommen
+        mins = 0;
+        
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.addRow(new Object[]{WorkDay.timeStamp(), "Kommen"});
 
@@ -291,26 +301,97 @@ public class TESTUI extends javax.swing.JFrame {
         JScrollBar vertical = jScrollPane1.getVerticalScrollBar();
         vertical.setValue(vertical.getMaximum());
     }//GEN-LAST:event_stempelnKommen
-
+    
+    
     // Secondary action from the NEWDAY button at start, to set the elapsed time timer
     private void startElapsedTimer(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startElapsedTimer
 
         String test = WorkDay.timeStamp();
         
-        Timer timer = new Timer(1, new ActionListener() {
+        
+
+        Timer timer = new Timer(1000, new ActionListener() {
+            
             @Override
             public void actionPerformed(ActionEvent ae) {
 
-                try {
-                    elapsedTimeLabel.setText(WorkDay.elapsedTime(test));
-                } catch (ParseException ex) {
-                    Logger.getLogger(TESTUI.class.getName()).log(Level.SEVERE, null, ex);
+                int secs = LocalDateTime.now().getSecond();
+//                System.out.println(mins++);
+
+                // if secs < 10
+                if (secs < 10) {
+                    elapsedTimeLabel.setText("00:0" + mins + ":0" + secs);
+                }
+                if (secs < 10 && mins >= 10) {
+                    elapsedTimeLabel.setText("00:" + mins + ":0" + secs);
                 }
 
+                // if secs > 10
+                if (secs >= 10) {
+                    elapsedTimeLabel.setText("00:0" + mins + ":" + secs);
+                }
+                if (secs >= 10 && mins >= 10) {
+                    elapsedTimeLabel.setText("00:" + mins + ":" + secs);
+                }
+                // if secs 59 then mins++
+                if (secs == 59) {
+                    mins++;
+//                    mins = mins * 0.250;
+//                    mins++;
+                    System.out.println(mins);
+//                    mins = mins - 3;
+//                    System.out.println(mins);
+                }
+                if (mins == 59) {
+                    hour++;
+                }
+
+//                try {
+//                    elapsedTimeLabel.setText(WorkDay.elapsedTime(test));
+//                } catch (ParseException ex) {
+//                    Logger.getLogger(TESTUI.class.getName()).log(Level.SEVERE, null, ex);
+//                }
             }
         });
         timer.start();
     }//GEN-LAST:event_startElapsedTimer
+
+    private void pauseStempeln(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pauseStempeln
+        Timer timer = new Timer(1000, new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                
+                if(mins < 10){
+                    pauseLabel.setText("00:0" +mins);
+                } else {
+                    pauseLabel.setText("00:" +mins);
+                }
+                
+            }
+        });
+        timer.start();
+    }//GEN-LAST:event_pauseStempeln
+    
+    int arbeitMins = 0;
+    int arbeitHours = 0;
+    
+    private void arbeitStempelnKommen(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_arbeitStempelnKommen
+        Timer timer = new Timer(1000, new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                
+                if(mins < 10){
+                    pauseLabel.setText("00:0" +mins);
+                } else {
+                    pauseLabel.setText("00:" +mins);
+                }
+                
+            }
+        });
+        timer.start();
+    }//GEN-LAST:event_arbeitStempelnKommen
 
     /**
      * @param args the command line arguments
@@ -352,7 +433,6 @@ public class TESTUI extends javax.swing.JFrame {
     private javax.swing.JLabel elapsedTimeLabel;
     private javax.swing.JLabel feierabendLabel;
     private javax.swing.JButton gehenButton;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -362,6 +442,7 @@ public class TESTUI extends javax.swing.JFrame {
     private javax.swing.JTable jTable1;
     private javax.swing.JButton kommenButton;
     private javax.swing.JButton newDayButton;
+    private javax.swing.JLabel pauseLabel;
     private javax.swing.JLabel todayDateTimeLabel;
     // End of variables declaration//GEN-END:variables
 }
